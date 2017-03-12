@@ -7,9 +7,13 @@ import (
 )
 
 func main() {
+	fmt.Println("--------------数组测试---------------")
 	test_array()
+	fmt.Println("--------------切片测试---------------")
 	test_slice()
+	fmt.Println("--------------map测试---------------")
 	test_map()
+	fmt.Println("--------------json测试---------------")
 	test_json()
 }
 
@@ -73,9 +77,11 @@ func test_map() {
 	// Map的迭代顺序是不确定的，并且不同的哈希函数实现可能导致不同的遍历顺序。
 	// 在实践中，遍历的顺序是随机的，每一次遍历的顺序都不相同。这是故意的，
 	// 每次都使用随机的遍历顺序可以强制要求程序不会依赖具体的哈希函数实现。
+	/*
 	for _, value := range map1 {
 		println("\t", value, "\n")
 	}
+	*/
 
 	//删除
 	delete(map1, 2)
@@ -83,23 +89,23 @@ func test_map() {
 	fmt.Println(map1[4] + "1")
 }
 
+//使用 json解析的结构体成员变量首字母必须大写！！！
 func test_json() {
-	/*	type BaseResponse struct {
-			code int
-			msg string
-			data T
-		}*/
 
-	type BaseResponse struct {
-		code int
-		msg  string
-		//data T
+	//Go 默认是不支持泛型的，定义一个接口结构体，即可当泛型使用
+	type T interface {
 	}
 
 	type Movie struct {
 		Title  string
 		Year   string
-		Actors []  string
+		Actors []string
+	}
+
+	type BaseResponse struct {
+		Code int
+		Msg  string
+		Data T
 	}
 
 	movies := []Movie{
@@ -109,13 +115,14 @@ func test_json() {
 		{"生化危机：终章", "2017", []string{"米拉·乔沃维奇", "伊恩·格雷", "艾丽·拉特"}},
 	}
 
+	baseMovie := BaseResponse{200, "success", movies}
+
 	//一个是不带缩进显示的，一个是带缩进显示的
-	//data, err := json.Marshal(movies)
-	data, err := json.MarshalIndent(movies, "", "    ")
+	//data, err := json.Marshal(baseMovie)
+	data, err := json.MarshalIndent(baseMovie, "", "    ")
 
 	if err != nil {
 		log.Fatalf("JSON marshaling failed: %s", err)
 	}
-	fmt.Printf("%s\n", data)
-
+	fmt.Printf(string(data))
 }
